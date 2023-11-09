@@ -1,16 +1,12 @@
 #include "script.h"
 
-#include <windows.h>
-
-typedef Script *(*CreateScriptFn)();
-typedef void(*DestroyScriptFn)(Script*);
+#include <dylib.hpp>
 
 int main() {
 
-	HINSTANCE hGetProcIDDLL = LoadLibrary("C:/dev/engine/loading_test/out/build/x64-Debug/script_lib.dll");
-
-	CreateScriptFn createScript = (CreateScriptFn)GetProcAddress(hGetProcIDDLL, "createScript");
-	DestroyScriptFn destroyScript = (DestroyScriptFn)GetProcAddress(hGetProcIDDLL, "destroyScript");
+	dylib scriptLib{ "C:/dev/engine/loading_test/out/build/x64-Debug/script_lib" };
+	auto createScript = scriptLib.get_function<Script*()>("createScript");
+	auto destroyScript = scriptLib.get_function<void(Script*)>("destroyScript");
 
 	Script *script = createScript();
 
